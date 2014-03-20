@@ -1,0 +1,32 @@
+#{extends 'main.html' /}
+
+<div id="login">
+	
+	<h1>&{'secure.title'}</h1>
+    <div class="form-signin">
+	#{form @authenticate()}
+		
+		#{if flash.error}
+			<p class="error">
+				&{flash.error}
+			</p>
+		#{/if}
+		#{if flash.success}
+			<p class="success">
+				&{flash.success}
+			</p>
+		#{/if}
+	
+
+
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <input type="email" name="username" id="username" value="${flash.username}" class="form-control" placeholder="Email address" required autofocus>
+        <input type="password" name="password" id="password" value="" class="form-control" placeholder="Password" required>
+        <label class="checkbox">
+            <input type="checkbox"  name="remember" id="remember" value="true" ${flash.remember ? 'checked="true"' : ''}> Remember me
+        </label>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" id="signin" value="&{'secure.signin'}">Sign in</button>
+
+	#{/form}
+        </div>
+</div>
