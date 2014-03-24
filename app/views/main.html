@@ -22,6 +22,7 @@
             </button>
             <a class="navbar-brand" href="@{Application.index()}">FreeMP</a>
         </div>
+        #{ifnot username}
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
@@ -34,6 +35,24 @@
                 </li>
             </ul>
         </div>
+        #{/ifnot}
+        #{else}
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/post/newpost">New Post</a> </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a  href="">Welcome back, ${username}</a>
+                </li>
+                <li>
+                   <a  href="/logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+        #{/else}
+
+
     </div>
 </div>
 <div class="jumbotron">

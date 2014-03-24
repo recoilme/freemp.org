@@ -1,0 +1,31 @@
+#{extends 'main.html' /}
+
+#{form @save()}
+
+#{if flash.error}
+<div class="alert alert-danger alert-error">
+    &{flash.error}
+</div>
+#{/if}
+#{if flash.success}
+<p class="success">
+    &{flash.success}
+</p>
+#{/if}
+
+
+<div class="form-horizontal">
+    <section class="post-body text">
+        <div class="form-group">
+            <textarea id="content" class="form-control" rows="10" placeholder="New Post" name="content" data-val-required="The Body field is required." data-val="true" cols="20"></textarea>
+            <span class="field-validation-valid" data-valmsg-replace="true" data-valmsg-for="content"></span>
+        </div>
+        <div class="form-group">
+            <input class="btn btn-primary" type="submit" value="Publish">
+        </div>
+    </section>
+</div>
+
+#{/form}
+
+

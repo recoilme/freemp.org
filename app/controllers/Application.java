@@ -15,8 +15,18 @@ import sun.security.provider.MD5;
 
 public class Application extends Controller {
 
+    @Before
+    static void setConnectedUser() {
+        if(Security.isConnected()) {
+            Vertex v = DbWrapper.getVertex(Security.connected().contains("@")?"User.email":"User.username", Security.connected());
+            if (v != null) {
+                renderArgs.put("username", v.getProperty("username"));
+            }
+        }
+    }
 
     public static void index() {
+
         render();
     }
 

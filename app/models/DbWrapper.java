@@ -50,4 +50,22 @@ public class DbWrapper {
         }
         return false;
     }
+
+    public static Vertex getVertex(String field, String value) {
+        OrientGraph graph = dbFactory.getTx();
+        Iterable<Vertex> results = null;
+        try {
+            results = graph.getVertices(field, value);
+            if (results.iterator().hasNext()) {
+                return results.iterator().next();
+            }
+        }
+        catch (Exception e) {
+            System.out.println("Ex:"+e.toString());
+        }
+        finally {
+            graph.shutdown();
+        }
+        return null;
+    }
 }

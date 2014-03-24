@@ -6,10 +6,14 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import models.DbWrapper;
 import play.Play;
+import play.libs.Crypto;
+import play.libs.Time;
 import play.mvc.Controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by recoilme on 19/03/14.
@@ -21,14 +25,33 @@ public class Register extends Controller {
 
         OrientGraph graph = dbFactory.getTx();
         for (Vertex v : graph.getVertices()) {
-            //graph.removeVertex(v);
-            System.out.println("User:"+v.getProperty("username"));
+            System.out.println(v.toString());
+            Set<String> properties = v.getPropertyKeys();
+            for (String key:properties) {
+                System.out.println(":"+key+":"+v.getProperty(key));
+            }
         }
 
         render();
     }
 
-    public static void save(String username, String email, String password, boolean remember) {
+    public static void save(String username, String email, String password) {
+        if (username.contains("@")) {
+            flash.error("Error: username must not contain:'@'");
+            index();
+        }
+        if (username.length()<1) {
+            flash.error("Error: username length must be more then 0");
+            index();
+        }
+        if (email.length()<=3) {
+            flash.error("Error: email length must be more then 3");
+            index();
+        }
+        if (password.length()<5) {
+            flash.error("Error: password length must be more then 5");
+            index();
+        }
         if (DbWrapper.has("User.email", email)) {
             flash.error("Error: user with this email:'"+ email + "' allready exists in database");
             index();
@@ -41,10 +64,22 @@ public class Register extends Controller {
         props.put("username",username);
         props.put("email",email);
         props.put("password",password);
-        props.put("remember",remember);
+        props.put("remember",true);
         if (DbWrapper.addVertex("User", props)) {
-            Security.authentify(email,password);
+
+            session.clear();
+            response.removeCookie("rememberme");
+            session.put("username", username);
+
+            Date expiration = new Date();
+            String duration = Play.configuration.getProperty("secure.rememberme.duration","30d");
+            expiration.setTime(expiration.getTime() + ((long) Time.parseDuration(duration)) * 1000L );
+            response.setCookie("rememberme", Crypto.sign(username + "-" + expiration.getTime()) + "-" + username + "-" + expiration.getTime(),null,"/",
+                    Time.parseDuration(duration),false,true);
+
+
             Application.index();
+
         }
         else {
             flash.error("Error: db commit failed");
