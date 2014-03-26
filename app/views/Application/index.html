@@ -1,3 +1,6 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
+#{list items:posts, as:'post'}
+<h1>${post.content} by ${post.uname}</h1>
+#{/list}
 

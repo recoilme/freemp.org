@@ -6,6 +6,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
+import models.Post;
 import play.*;
 import play.mvc.*;
 
@@ -29,11 +30,21 @@ public class Application extends Controller {
     public static void index() {
         OrientGraph graph = DbWrapper.dbFactory.getTx();
         Iterable<Vertex> results = null;
+        List<Post> posts = new ArrayList<Post>();
         try {
-            results = graph.command(new OCommandSQL("select * , first(in('author').username) as uname from Article order by modified desc")).execute();
+            results = graph.command(
+                    new OCommandSQL("traverse in_author from Article")
+                    //new OCommandSQL("select * , first(in('author').username) as uname from Article order by modified desc limit 10")
+            ).execute();
 
             for (Vertex post:results){
-                System.out.println("posts:"+post.toString()+post.getProperty("content"));
+                System.out.println(post.getProperty("username"));
+                /*Post p = new Post();
+                p.content = post.getProperty("content");
+                p.modified = post.getProperty("modified");
+                p.uname = post.getProperty("uname");
+
+                posts.add(p);*/
             }
         }
         catch (Exception e) {
@@ -42,7 +53,7 @@ public class Application extends Controller {
         finally {
             graph.shutdown();
         }
-        render();
+        render(posts);
     }
 
     public static void register() {
