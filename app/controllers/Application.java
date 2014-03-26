@@ -1,5 +1,6 @@
 package controllers;
 
+import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.tinkerpop.blueprints.Parameter;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
@@ -26,7 +27,21 @@ public class Application extends Controller {
     }
 
     public static void index() {
+        OrientGraph graph = DbWrapper.dbFactory.getTx();
+        Iterable<Vertex> results = null;
+        try {
+            results = graph.command(new OCommandSQL("select * , first(in('author').username) as uname from Article order by modified desc")).execute();
 
+            for (Vertex post:results){
+                System.out.println("posts:"+post.toString()+post.getProperty("content"));
+            }
+        }
+        catch (Exception e) {
+            System.out.println("Ex getQueryResult:"+e.toString());
+        }
+        finally {
+            graph.shutdown();
+        }
         render();
     }
 

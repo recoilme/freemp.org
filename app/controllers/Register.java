@@ -30,7 +30,9 @@ public class Register extends Controller {
             for (String key:properties) {
                 System.out.println(":"+key+":"+v.getProperty(key));
             }
+            //graph.removeVertex(v);
         }
+        graph.shutdown();
 
         render();
     }
@@ -52,11 +54,11 @@ public class Register extends Controller {
             flash.error("Error: password length must be more then 5");
             index();
         }
-        if (DbWrapper.has("User.email", email)) {
+        if (DbWrapper.getVertex("User.email", email)==null) {
             flash.error("Error: user with this email:'"+ email + "' allready exists in database");
             index();
         }
-        if (DbWrapper.has("User.username", username)) {
+        if (DbWrapper.getVertex("User.username", username)==null) {
             flash.error("Error: user with this username:'"+ username + "' allready exists in database");
             index();
         }
@@ -65,7 +67,7 @@ public class Register extends Controller {
         props.put("email",email);
         props.put("password",password);
         props.put("remember",true);
-        if (DbWrapper.addVertex("User", props)) {
+        if (DbWrapper.addVertex("User", props)!=null) {
 
             session.clear();
             response.removeCookie("rememberme");
