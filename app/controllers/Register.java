@@ -19,11 +19,10 @@ import java.util.Set;
  * Created by recoilme on 19/03/14.
  */
 public class Register extends Controller {
-    static OrientGraphFactory dbFactory = new OrientGraphFactory("plocal:/Users/recoilme/tmp/db").setupPool(1,10);
 
     public static void index() {
 
-        OrientGraph graph = dbFactory.getTx();
+        OrientGraph graph = DbWrapper.dbFactory.getTx();
         for (Vertex v : graph.getVertices()) {
             System.out.println(v.toString());
             Set<String> properties = v.getPropertyKeys();
@@ -54,11 +53,11 @@ public class Register extends Controller {
             flash.error("Error: password length must be more then 5");
             index();
         }
-        if (DbWrapper.getVertex("User.email", email)==null) {
+        if (DbWrapper.getVertex("User.email", email)!=null) {
             flash.error("Error: user with this email:'"+ email + "' allready exists in database");
             index();
         }
-        if (DbWrapper.getVertex("User.username", username)==null) {
+        if (DbWrapper.getVertex("User.username", username)!=null) {
             flash.error("Error: user with this username:'"+ username + "' allready exists in database");
             index();
         }

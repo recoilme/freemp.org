@@ -1,6 +1,8 @@
 package controllers;
 
 import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Parameter;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
@@ -28,23 +30,35 @@ public class Application extends Controller {
     }
 
     public static void index() {
+        List<Post> posts = new ArrayList<Post>();
+
         OrientGraph graph = DbWrapper.dbFactory.getTx();
         Iterable<Vertex> results = null;
-        List<Post> posts = new ArrayList<Post>();
+
         try {
             results = graph.command(
-                    new OCommandSQL("traverse in_author from Article")
+                    new OCommandSQL("traverse in_author from (select * from Article)")
+                    //"select from Article where any()")
                     //new OCommandSQL("select * , first(in('author').username) as uname from Article order by modified desc limit 10")
             ).execute();
 
             for (Vertex post:results){
-                System.out.println(post.getProperty("username"));
-                /*Post p = new Post();
-                p.content = post.getProperty("content");
-                p.modified = post.getProperty("modified");
-                p.uname = post.getProperty("uname");
+                Set<String> properties = post.getPropertyKeys();
+                Iterable<Edge> e = post.getEdges(Direction.IN, "author");
+                for (Edge edge:e) {
+                    if (e!=null)
+                        System.out.println("e:"+edge.getId());
+                }
+                for (String key:properties) {
+                    System.out.println(post.getId()+":" +post.toString()+":"+ key + ":" + post.getProperty(key));
 
-                posts.add(p);*/
+                }
+                Post p = new Post();
+                //p.content = post.getProperty("content");
+                //p.modified = post.getProperty("modified");
+                //p.uname = post.getProperty("uname");
+
+                posts.add(p);
             }
         }
         catch (Exception e) {
@@ -53,6 +67,7 @@ public class Application extends Controller {
         finally {
             graph.shutdown();
         }
+
         render(posts);
     }
 
