@@ -16,7 +16,7 @@ import java.util.Map;
  * Created by recoilme on 20/03/14.
  */
 public class DbWrapper {
-    public static OrientGraphFactory dbFactory = new OrientGraphFactory("plocal:/Users/recoil/orientdb-1.7/databases/fdb").setupPool(1,10);
+    public static OrientGraphFactory dbFactory = new OrientGraphFactory("plocal:/Users/recoilme/orientdb-1.7/databases/fdb").setupPool(1,10);
 
     public static Vertex addVertex(String className, Map<String,Object> props) {
         OrientGraph graph = dbFactory.getTx();
@@ -43,7 +43,6 @@ public class DbWrapper {
         for (Field field : fields) {
             try {
                 props.put(field.getName(),field.get(object));
-                //System.out.println(clazz.getSimpleName()+"Field name = " + field.getName()+":"+field.get(object));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }

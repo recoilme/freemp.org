@@ -1,0 +1,5 @@
+#{extends 'main.html' /}
+<h1>${vArtist.getProperty("artistName")}</h1>
+#{for (Edge edge:similars) {}
+${(edge.getVertex(Direction.IN).getProperty("artistName"));}
+#{}}

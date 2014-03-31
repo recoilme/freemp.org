@@ -9,6 +9,7 @@ import java.util.Map;
  * Created by recoil on 31.03.14.
  */
 public class ClsArtist {
+    public String searchName;
     public String artistName;
     public String mbid;
     public String lastfmUrl;

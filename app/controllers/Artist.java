@@ -1,6 +1,9 @@
 package controllers;
 
 import com.google.gson.*;
+import com.orientechnologies.orient.core.id.ORID;
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import models.ClsArtist;
 import models.DbWrapper;
@@ -17,20 +20,32 @@ import java.util.Map;
  */
 public class Artist extends Controller {
 
+    public static final String special = "'\\+-&|!(){}[]^\"~*?:;,";
+
     public static void index() {
         renderHtml("Ok");
     }
 
     public static void name(String name){
-        name = (""+name).toLowerCase().replace(";","").replace("'","").replace("\"","").trim();
-        JsonElement artistLastfm= searchArtistLastfm(name);
-        if (artistLastfm!=null) {
-            ClsArtist artist = parseArtist(artistLastfm);
-            renderText(artist.artistName);
+
+        name = (""+name).toLowerCase().replace(special,"").replace(" ","_").trim();
+        Vertex vArtist = DbWrapper.getVertex("ClsArtist.searchName", name);
+        if (vArtist == null) {
+            JsonElement artistLastfm = searchArtistLastfm(name);
+            if (artistLastfm == null) {
+                renderText("artist not found on Last.fm");
+            }
+            vArtist = parseArtist(artistLastfm);
         }
-        else {
-            renderText("ClsArtist not found");
+        if (vArtist == null) {
+            renderText("vArtist is null");
         }
+        //getArtistBio(vArtist);
+        Iterable<Edge> similars = vArtist.getEdges(Direction.OUT, "similarNameArtist");
+        for (Edge edge:similars) {
+            System.out.println(edge.getVertex(Direction.IN).getProperty("artistName"));
+        }
+        render(vArtist,similars);
         /*
         String url = String.format("http://www.lastfm.ru/music/%s/+wiki",
                 name.replace(" ","+"));
@@ -41,24 +56,41 @@ public class Artist extends Controller {
         */
     }
 
-    public static ClsArtist parseArtist(JsonElement jsonElement) {
-        ClsArtist artist = null;
+    public static void getArtistBio(Vertex vArtist){
+
+    }
+
+    public static Vertex parseArtist(JsonElement jsonElement) {
+        ClsArtist   tmpArtist   = null;
+        Vertex      mainArtist  = null;
+        Vertex      slaveArtist = null;
         try {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             jsonObject = jsonObject.getAsJsonObject("results");
             jsonObject = jsonObject.getAsJsonObject("artistmatches");
             JsonArray artists = jsonObject.getAsJsonArray("artist");
+
             for (int i=0;i<artists.size();i++) {
                 jsonObject = artists.get(i).getAsJsonObject();
                 String mbid = ""+jsonObject.get("mbid").getAsString();
                 if (!mbid.equals("")) {
+
+                    String searchName = (""+jsonObject.get("name").getAsString()).toLowerCase().replace(special,"").replace(" ","_").trim();
+                    tmpArtist = new ClsArtist();
+                    tmpArtist.searchName = searchName;
+                    tmpArtist.artistName = ""+jsonObject.get("name").getAsString();
+                    tmpArtist.mbid = ""+jsonObject.get("mbid").getAsString();
+                    tmpArtist.lastfmUrl = ""+jsonObject.get("url").getAsString();
+                    tmpArtist.images = jsonObject.getAsJsonArray("image").toString();
+
                     if (i==0) {
-                        artist = new ClsArtist();
-                        artist.artistName = ""+jsonObject.get("name").getAsString();
-                        artist.mbid = ""+jsonObject.get("mbid").getAsString();
-                        artist.lastfmUrl = ""+jsonObject.get("url").getAsString();
-                        artist.images = jsonObject.getAsJsonArray("image").toString();
-                        DbWrapper.saveClass(artist);
+                        mainArtist = DbWrapper.saveClass(tmpArtist);
+                    }
+                    else {
+                        slaveArtist = DbWrapper.saveClass(tmpArtist);
+                        if (mainArtist!=null && slaveArtist!=null) {
+                            Edge similarNameArtist = DbWrapper.addEdge("similarNameArtist", (ORID) mainArtist.getId(), (ORID) slaveArtist.getId());
+                        }
                     }
                 }
 
@@ -67,7 +99,7 @@ public class Artist extends Controller {
         catch (Exception e) {
             e.printStackTrace();
         }
-        return artist;
+        return mainArtist;
     }
 
     //search artist in web and add 2 db or get from db if exists
@@ -81,7 +113,7 @@ public class Artist extends Controller {
                 System.out.print("fromdb");
             }
             else {
-                String artistSearch = String.format("http://ws.audioscrobbler.com/2.0/?method=artist.search&api_key=0cb75104931acd7f44f571ed12cff105&artist=%s&format=json&limit=5", artist);
+                String artistSearch = String.format("http://ws.audioscrobbler.com/2.0/?method=artist.search&api_key=0cb75104931acd7f44f571ed12cff105&artist=%s&format=json&limit=3", artist);
                 jsonElement = WS.url(artistSearch).get().getJson();
                 Map<String, Object> props = new HashMap<String, Object>();
                 props.put("artist", artist);

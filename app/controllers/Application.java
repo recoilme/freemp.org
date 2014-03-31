@@ -37,7 +37,7 @@ public class Application extends Controller {
 
         try {
             results = graph.command(
-                    new OCommandSQL("traverse in_author from (select * from Article)")
+                    new OCommandSQL("select *, in('author')[0].username as uname from Article")//"traverse in_author from (select * from Article)")
                     //"select from Article where any()")
                     //new OCommandSQL("select * , first(in('author').username) as uname from Article order by modified desc limit 10")
             ).execute();
@@ -54,9 +54,9 @@ public class Application extends Controller {
 
                 }
                 Post p = new Post();
-                //p.content = post.getProperty("content");
-                //p.modified = post.getProperty("modified");
-                //p.uname = post.getProperty("uname");
+                p.content = post.getProperty("content");
+                p.modified = post.getProperty("modified");
+                p.uname = post.getProperty("uname");
 
                 posts.add(p);
             }
