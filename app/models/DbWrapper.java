@@ -8,6 +8,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,16 +24,31 @@ public class DbWrapper {
         try {
             vertex = graph.addVertex("class:"+className);
             vertex.setProperties(props);
-            graph.commit();
+            //graph.commit();
         }
         catch (Exception e) {
             System.out.println("Ex add vertex:"+e.toString());
-            graph.rollback();
+            //graph.rollback();
         }
         finally {
             graph.shutdown();
         }
         return vertex;
+    }
+
+    public static Vertex saveClass(Object object){
+        Class clazz = object.getClass();
+        Map<String,Object> props = new HashMap<String,Object>();
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                props.put(field.getName(),field.get(object));
+                //System.out.println(clazz.getSimpleName()+"Field name = " + field.getName()+":"+field.get(object));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return addVertex(clazz.getSimpleName(),props);
     }
 
     public static Edge addEdge(String edgeName, ORID vOut, ORID vIn) {

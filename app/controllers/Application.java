@@ -71,9 +71,6 @@ public class Application extends Controller {
         render(posts);
     }
 
-    public static void register() {
-
-    }
 
     /*
             graph.addVertex( "class:User", "email", email, "password", password, "remember", remember);
