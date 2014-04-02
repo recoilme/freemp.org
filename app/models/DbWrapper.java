@@ -2,6 +2,7 @@ package models;
 
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
@@ -11,6 +12,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by recoilme on 20/03/14.
@@ -74,20 +76,43 @@ public class DbWrapper {
         try {
             results = graph.getVertices(field, value);
             if (results.iterator().hasNext()) {
-                return results.iterator().next();
+                 return results.iterator().next();
             }
         }
         catch (Exception e) {
             System.out.println("Ex get vertex:"+e.toString());
         }
         finally {
-            graph.shutdown();
+            //graph.shutdown();
         }
         return null;
+    }
+
+    public static OrientGraph getGraph() {
+        return dbFactory.getTx();
     }
 
     public static Iterable<Vertex> getQueryResult(String sql) {
 
         return null;
+    }
+
+    public static String Vertex2String(Vertex v) {
+        StringBuilder result = new StringBuilder();
+        if (v!=null) {
+            Set<String> propertys = v.getPropertyKeys();
+            for (String key: propertys){
+                if (!result.toString().equals("")) {
+                    result.append(",");
+                }
+                result.append(key);
+                result.append(":");
+                result.append(v.getProperty(key));
+            }
+        }
+        else {
+            result.append("null");
+        }
+        return result.toString();
     }
 }

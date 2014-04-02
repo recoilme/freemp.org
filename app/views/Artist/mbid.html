@@ -3,3 +3,6 @@
 #{list items:similarNames, as:'vSimilarArtist'}
 <h2>${vSimilarArtist.getProperty("artistName")} </h2>
 #{/list}
+#{if vBio!=null}
+${vBio.getProperty("bio")}
+#{/if}

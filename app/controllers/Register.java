@@ -1,6 +1,7 @@
 package controllers;
 
 import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
@@ -8,6 +9,7 @@ import models.DbWrapper;
 import play.Play;
 import play.libs.Crypto;
 import play.libs.Time;
+import play.mvc.Before;
 import play.mvc.Controller;
 
 import java.util.Date;
@@ -19,21 +21,34 @@ import java.util.Set;
  * Created by recoilme on 19/03/14.
  */
 public class Register extends Controller {
-
-    public static void index() {
-
-        OrientGraph graph = DbWrapper.dbFactory.getTx();
-        for (Vertex v : graph.getVertices()) {
-            System.out.println(v.toString());
-            Set<String> properties = v.getPropertyKeys();
-            for (String key:properties) {
-                System.out.println(":"+key+":"+v.getProperty(key));
+    @Before
+    static void setConnectedUser() {
+        if(Security.isConnected()) {
+            Vertex v = DbWrapper.getVertex(Security.connected().contains("@")?"User.email":"User.username", Security.connected());
+            if (v != null) {
+                renderArgs.put("username", v.getProperty("username"));
             }
-            //graph.removeVertex(v);
         }
-        graph.shutdown();
-
+    }
+    public static void index() {
         render();
+    }
+
+    public static void createNewDb() {
+        if (renderArgs.get("username").equals("admin")) {
+            OrientGraph graph = DbWrapper.dbFactory.getTx();
+            for (Edge e : graph.getEdges()) {
+                System.out.println(e.toString());
+                e.remove();
+            }
+            for (Vertex v : graph.getVertices()) {
+                System.out.println(v.toString());
+                graph.removeVertex(v);
+            }
+
+            graph.shutdown();
+        }
+
     }
 
     public static void save(String username, String email, String password) {

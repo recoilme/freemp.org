@@ -38,9 +38,12 @@
         #{/ifnot}
         #{else}
         <div class="navbar-collapse collapse">
+
             <ul class="nav navbar-nav">
                 <li><a href="/post/newpost">New Post</a> </li>
+
             </ul>
+
             <ul class="nav navbar-nav navbar-right">
                 <li>
                     <a  href="">Welcome back, ${username}</a>
@@ -49,6 +52,15 @@
                    <a  href="/logout">Logout</a>
                 </li>
             </ul>
+            <div class="navbar-form navbar-right" role="search">
+            #{form @Artist.search()}
+
+                <div class="form-group">
+                    <input name="searchtxt" id="searchtxt" type="text" class="form-control" placeholder="Search artist">
+                </div>
+                <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+            #{/form}
+            </div>
         </div>
         #{/else}
 
