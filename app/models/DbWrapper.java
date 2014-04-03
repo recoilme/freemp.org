@@ -1,15 +1,11 @@
 package models;
 
 import com.orientechnologies.orient.core.id.ORID;
-import com.orientechnologies.orient.core.sql.OCommandSQL;
-import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
-import org.jboss.netty.bootstrap.Bootstrap;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +16,8 @@ import java.util.Set;
  */
 public class DbWrapper {
 
-    public static OrientGraph graph = new OrientGraphFactory("plocal:/Users/recoil/orientdb-1.7/databases/fdb").setupPool(1,10).getTx();
+
+    public static OrientGraph graph = new OrientGraphFactory("plocal:~freemp.org/fdb").setupPool(1,10).getTx();
 
     public static Vertex addVertex(String className, Map<String,Object> props) {
 
