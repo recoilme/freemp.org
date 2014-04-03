@@ -33,7 +33,7 @@ public class Application extends Controller {
     public static void index() {
         List<Post> posts = new ArrayList<Post>();
 
-        OrientGraph graph = DbWrapper.dbFactory.getTx();
+        OrientGraph graph = DbWrapper.graph;
         Iterable<Vertex> results = null;
 
         try {
@@ -66,7 +66,7 @@ public class Application extends Controller {
             System.out.println("Ex getQueryResult:"+e.toString());
         }
         finally {
-            graph.shutdown();
+            //graph.shutdown();
         }
 
         render(posts);

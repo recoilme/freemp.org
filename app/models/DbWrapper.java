@@ -8,6 +8,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
+import org.jboss.netty.bootstrap.Bootstrap;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -18,10 +19,11 @@ import java.util.Set;
  * Created by recoilme on 20/03/14.
  */
 public class DbWrapper {
-    public static OrientGraphFactory dbFactory = new OrientGraphFactory("plocal:/Users/recoilme/orientdb-1.7/databases/fdb").setupPool(1,10);
+
+    public static OrientGraph graph = new OrientGraphFactory("plocal:/Users/recoil/orientdb-1.7/databases/fdb").setupPool(1,10).getTx();
 
     public static Vertex addVertex(String className, Map<String,Object> props) {
-        OrientGraph graph = dbFactory.getTx();
+
         OrientVertex vertex = null;
         try {
             vertex = graph.addVertex("class:"+className);
@@ -33,7 +35,7 @@ public class DbWrapper {
             //graph.rollback();
         }
         finally {
-            graph.shutdown();
+            //graph.shutdown();
         }
         return vertex;
     }
@@ -53,7 +55,7 @@ public class DbWrapper {
     }
 
     public static Edge addEdge(String edgeName, ORID vOut, ORID vIn) {
-        OrientGraph graph = dbFactory.getTx();
+        //OrientGraph graph = dbFactory.getTx();
         Edge edge = null;
         try {
             edge = graph.addEdge(null, graph.getVertex(vOut), graph.getVertex(vIn), edgeName);
@@ -65,13 +67,13 @@ public class DbWrapper {
             graph.rollback();
         }
         finally {
-            graph.shutdown();
+            //graph.shutdown();
         }
         return edge;
     }
 
     public static Vertex getVertex(String field, String value) {
-        OrientGraph graph = dbFactory.getTx();
+        //OrientGraph graph = dbFactory.getTx();
         Iterable<Vertex> results = null;
         try {
             results = graph.getVertices(field, value);
@@ -89,12 +91,7 @@ public class DbWrapper {
     }
 
     public static OrientGraph getGraph() {
-        return dbFactory.getTx();
-    }
-
-    public static Iterable<Vertex> getQueryResult(String sql) {
-
-        return null;
+        return graph;
     }
 
     public static String Vertex2String(Vertex v) {

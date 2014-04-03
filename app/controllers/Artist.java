@@ -44,7 +44,7 @@ public class Artist extends Controller {
     }
 
     public static void mbid(String mbid) {
-        OrientGraph graph = DbWrapper.dbFactory.getTx();
+        OrientGraph graph = DbWrapper.graph;
         Vertex vArtist = DbWrapper.getVertex("ClsArtist.mbid", mbid);
         if (vArtist == null) {
             renderText("vArtist is null");
@@ -52,10 +52,17 @@ public class Artist extends Controller {
 
         List<Vertex> similarNames = new ArrayList<Vertex>();
         try {
-            Iterable<Edge> similars = vArtist.getEdges(Direction.OUT, "similarNameArtist");
+            Iterable<Edge> similars = vArtist.getEdges(Direction.BOTH, "similarNameArtist");
+            String vId = vArtist.getId().toString();
             for (Edge edge : similars) {
                 //System.out.println(edge.toString());
-                similarNames.add(edge.getVertex(Direction.IN));
+                //System.out.println(vArtist.getId()+" | "+edge.getVertex(Direction.OUT).getId()+ " | "+edge.getVertex(Direction.IN).getId());
+                if (vId.equals(""+edge.getVertex(Direction.OUT).getId())) {
+                    similarNames.add(edge.getVertex(Direction.IN));
+                }
+                else {
+                    similarNames.add(edge.getVertex(Direction.OUT));
+                }
             }
         }
         catch (Exception e) {
@@ -68,9 +75,10 @@ public class Artist extends Controller {
 
     }
 
-    public static void search(String searchtxt) {
-        searchtxt = (""+searchtxt).toLowerCase().replace(Artist.special,"").replace(" ","_").trim();
+    public static void search(String q) {
+        String searchtxt = (""+q).toLowerCase().replace(Artist.special,"").replace(" ","_").trim();
         Vertex vArtist = DbWrapper.getVertex("ClsArtist.searchName", searchtxt);
+        DbWrapper.Vertex2String(vArtist);
         if (vArtist == null) {
             JsonElement artistLastfm = Artist.searchArtistLastfm(searchtxt);
             if (artistLastfm == null) {
@@ -86,25 +94,22 @@ public class Artist extends Controller {
 
     public static Vertex getArtistBio(Vertex vArtist){
         String lang = Lang.get();
-        System.out.println("3456");
-            Iterable<Edge> bios = vArtist.getEdges(Direction.OUT, "artistBio");
+        Iterable<Edge> bios = vArtist.getEdges(Direction.OUT, "artistBio");
 
 
-            for (Edge edge : bios) {
+        for (Edge edge : bios) {
 
-                System.out.println("has123"+edge.toString() );
+            System.out.println("has123"+edge.toString() );
 
-                Vertex v = edge.getVertex(Direction.IN);
-                System.out.println(DbWrapper.Vertex2String(v));
-                if (v.getProperty("locale").equals(lang)) {
-                    System.out.println("biodb");
-                    return v;
-                }
-
+            Vertex v = edge.getVertex(Direction.IN);
+            System.out.println(DbWrapper.Vertex2String(v));
+            if (v.getProperty("locale").equals(lang)) {
+                System.out.println("biodb");
+                return v;
             }
 
-        return null;
-        /*
+        }
+
         try {
 
             //Vertex not found^ create it!
@@ -126,10 +131,10 @@ public class Artist extends Controller {
             return vBio;
         }
         catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return null;
         }
-        */
+
     }
 
     public static Vertex parseArtist(JsonElement jsonElement) {

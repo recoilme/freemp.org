@@ -1,8 +1,12 @@
 #{extends 'main.html' /}
 <h1>${vArtist.getProperty("artistName")}</h1>
+<h5>Artist's with similar names:
 #{list items:similarNames, as:'vSimilarArtist'}
-<h2>${vSimilarArtist.getProperty("artistName")} </h2>
+<a href='http://localhost:9000/artist/mbid?mbid=${vSimilarArtist.getProperty("mbid")}'>${vSimilarArtist.getProperty("artistName")}</a>&nbsp
 #{/list}
+</h5>
 #{if vBio!=null}
 ${vBio.getProperty("bio")}
+
+<h5>${vBio.getProperty("lastEdit").raw()}</h5>
 #{/if}
