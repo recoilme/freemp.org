@@ -108,12 +108,8 @@ public class Artist extends Controller {
 
         for (Edge edge : bios) {
 
-            System.out.println("has123"+edge.toString() );
-
             Vertex v = edge.getVertex(Direction.IN);
-            System.out.println(DbWrapper.Vertex2String(v));
             if (v.getProperty("locale").equals(lang)) {
-                System.out.println("biodb");
                 return v;
             }
 
@@ -136,7 +132,6 @@ public class Artist extends Controller {
             bio.locale = lang;
             Vertex vBio = DbWrapper.saveClass(bio);
             Edge artistBio = DbWrapper.addEdge("artistBio",(ORID)vArtist.getId(),(ORID)vBio.getId());
-            System.out.println("bioweb");
             return vBio;
         }
         catch (Exception e) {
@@ -202,7 +197,7 @@ public class Artist extends Controller {
             if (searchArtist!=null) {
                 JsonParser jsonParser = new JsonParser();
                 jsonElement = (JsonElement)jsonParser.parse((String)searchArtist.getProperty("content"));
-                System.out.print("fromdb");
+
             }
             else {
                 String artistSearch = String.format("http://ws.audioscrobbler.com/2.0/?method=artist.search&api_key=0cb75104931acd7f44f571ed12cff105&artist=%s&format=json&limit=3", artist);
@@ -215,7 +210,6 @@ public class Artist extends Controller {
                 props.put("content", jsonElement.toString());
                 props.put("modified", System.currentTimeMillis());
                 searchArtist = DbWrapper.addVertex("SearchArtist", props);
-                System.out.print("fromweb");
             }
         }
         catch (Exception e) {
