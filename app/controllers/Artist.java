@@ -51,6 +51,7 @@ public class Artist extends Controller {
         }
 
         List<Vertex> similarNames = new ArrayList<Vertex>();
+        String img = "";
         try {
             Iterable<Edge> similars = vArtist.getEdges(Direction.BOTH, "similarNameArtist");
             String vId = vArtist.getId().toString();
@@ -64,6 +65,14 @@ public class Artist extends Controller {
                     similarNames.add(edge.getVertex(Direction.OUT));
                 }
             }
+            JsonParser jsonParser = new JsonParser();
+            JsonArray imgs = jsonParser.parse((String) vArtist.getProperty("images")).getAsJsonArray();
+            for (int i=0;i<imgs.size();i++) {
+                String s=""+imgs.get(i).getAsJsonObject().get("#text").getAsString();
+                if (!s.equals("")) {
+                    img = s;
+                }
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -71,7 +80,7 @@ public class Artist extends Controller {
         //System.out.println(DbWrapper.Vertex2String(vArtist));
         Vertex vBio = getArtistBio(vArtist);
         //System.out.println(DbWrapper.Vertex2String(vBio));
-        render(vArtist,similarNames,vBio);
+        render(vArtist,similarNames,vBio,img);
 
     }
 

@@ -22,8 +22,9 @@
             </button>
             <a class="navbar-brand" href="@{Application.index()}">FreeMP</a>
         </div>
-        #{ifnot username}
         <div class="navbar-collapse collapse">
+        #{ifnot username}
+            <!--
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sign in | Register<b class="caret"></b></a>
@@ -34,16 +35,15 @@
                     </ul>
                 </li>
             </ul>
-        </div>
+            -->
         #{/ifnot}
         #{else}
-        <div class="navbar-collapse collapse">
-
+            <!--
             <ul class="nav navbar-nav">
                 <li><a href="/post/newpost">New Post</a> </li>
 
             </ul>
-
+            -->
             <ul class="nav navbar-nav navbar-right">
                 <li>
                     <a  href="">Welcome back, ${username}</a>
@@ -52,24 +52,25 @@
                    <a  href="/logout">Logout</a>
                 </li>
             </ul>
+
+        #{/else}
             <div class="navbar-form navbar-right" role="search">
-            #{form @Artist.search()}
+                #{form @Artist.search()}
 
                 <div class="form-group">
                     <input name="q" id="q" type="text" class="form-control" placeholder="Search artist">
                 </div>
-                <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
-            #{/form}
+                <button type="submit" class="btn btn-default" style="position: absolute; left: -9999px"><span class="glyphicon glyphicon-search"></span></button>
+                #{/form}
             </div>
         </div>
-        #{/else}
-
 
     </div>
 </div>
+
 <div class="jumbotron">
     <div class="container">
-        <h1>${blogBaseline} <a class="btn btn-primary btn-lg" role="button">Get player »</a></h1>
+        <h1>${blogBaseline} <a class="btn btn-primary btn-lg" role="button" href="https://github.com/recoilme/freemp">Get player »</a></h1>
     </div>
 </div>
 

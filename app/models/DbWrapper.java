@@ -17,7 +17,7 @@ import java.util.Set;
 public class DbWrapper {
 
 
-    public static OrientGraph graph = new OrientGraphFactory("plocal:~freemp.org/fdb").setupPool(1,10).getTx();
+    public static OrientGraph graph = new OrientGraphFactory("plocal:fdb").setupPool(1,10).getTx();
 
     public static Vertex addVertex(String className, Map<String,Object> props) {
 
