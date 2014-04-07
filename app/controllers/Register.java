@@ -35,7 +35,8 @@ public class Register extends Controller {
     }
 
     public static void createNewDb() {
-        if (renderArgs.get("username").equals("admin")) {
+        //System.out.println(renderArgs.get("username"));
+        if (renderArgs.get("username")!=null && renderArgs.get("username").equals("admin")) {
             OrientGraph graph = DbWrapper.graph;
             for (Edge e : graph.getEdges()) {
                 System.out.println(e.toString());
@@ -45,8 +46,6 @@ public class Register extends Controller {
                 System.out.println(v.toString());
                 graph.removeVertex(v);
             }
-
-            //graph.shutdown();
         }
 
     }

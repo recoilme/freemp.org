@@ -1,12 +1,16 @@
 #{extends 'main.html' /}
 <h1>${vArtist.getProperty("artistName")}</h1>
-<img src="${img}"/>
-<h5>Artist's with similar names:
-#{list items:similarNames, as:'vSimilarArtist'}
-<a href='http://localhost:9000/artist/mbid?mbid=${vSimilarArtist.getProperty("mbid")}'>${vSimilarArtist.getProperty("artistName")}</a>&nbsp
-#{/list}
-</h5>
+<img src="${img}" width="360"/><br/>
+
+#{if similarNames.size()>0}
+    <h5>Artist's with similar names:
+        #{list items:similarNames, as:'vSimilarArtist'}
+        <a href='http://localhost:9000/artist/mbid?mbid=${vSimilarArtist.getProperty("mbid")}'>${vSimilarArtist.getProperty("artistName")}</a>&nbsp
+        #{/list}
+    </h5>
+#{/if}
+
 #{if vBio!=null}
-${vBio.getProperty("bio")}
-<h5>${vBio.getProperty("lastEdit").raw()}</h5>
+    ${vBio.getProperty("bio")}
+    <h5>${vBio.getProperty("lastEdit").raw()}</h5>
 #{/if}

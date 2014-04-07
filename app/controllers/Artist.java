@@ -47,7 +47,7 @@ public class Artist extends Controller {
         OrientGraph graph = DbWrapper.graph;
         Vertex vArtist = DbWrapper.getVertex("ClsArtist.mbid", mbid);
         if (vArtist == null) {
-            renderText("vArtist is null");
+            error("Artist not found");
         }
 
         List<Vertex> similarNames = new ArrayList<Vertex>();
@@ -96,7 +96,7 @@ public class Artist extends Controller {
             vArtist = Artist.parseArtist(artistLastfm);
         }
         if (vArtist == null) {
-            renderText("vArtist is null");
+            error("Artist: "+q+" - not found");
         }
         Artist.mbid(vArtist.getProperty("mbid").toString());
     }
@@ -108,10 +108,7 @@ public class Artist extends Controller {
 
         for (Edge edge : bios) {
 
-            System.out.println("has123"+edge.toString() );
-
             Vertex v = edge.getVertex(Direction.IN);
-            System.out.println(DbWrapper.Vertex2String(v));
             if (v.getProperty("locale").equals(lang)) {
                 System.out.println("biodb");
                 return v;
