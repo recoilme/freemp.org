@@ -95,6 +95,9 @@ public class Artist extends Controller {
             }
             vArtist = Artist.parseArtist(artistLastfm);
         }
+        else {
+            System.out.println("fromdb");
+        }
         if (vArtist == null) {
             error("Artist: "+q+" - not found");
         }
@@ -145,6 +148,7 @@ public class Artist extends Controller {
         ClsArtist   tmpArtist   = null;
         Vertex      mainArtist  = null;
         Vertex      slaveArtist = null;
+        System.out.println("fromweb");
         try {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             jsonObject = jsonObject.getAsJsonObject("results");

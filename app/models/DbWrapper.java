@@ -25,11 +25,11 @@ public class DbWrapper {
         try {
             vertex = graph.addVertex("class:"+className);
             vertex.setProperties(props);
-            graph.commit();
+            //graph.commit();
         }
         catch (Exception e) {
             System.out.println("Ex add vertex:"+e.toString());
-            graph.rollback();
+            //graph.rollback();
         }
         finally {
             //graph.shutdown();
