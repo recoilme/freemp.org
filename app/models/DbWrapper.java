@@ -56,7 +56,6 @@ public class DbWrapper {
         Edge edge = null;
         try {
             edge = graph.addEdge(null, graph.getVertex(vOut), graph.getVertex(vIn), edgeName);
-            System.out.println("Created edge: " + edge.getId());
             graph.commit();
         }
         catch (Exception e) {
