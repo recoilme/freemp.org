@@ -5,7 +5,7 @@
 #{if similarNames.size()>0}
     <h5>Artist's with similar names:
         #{list items:similarNames, as:'vSimilarArtist'}
-        <a href='http://localhost:9000/artist/mbid?mbid=${vSimilarArtist.getProperty("mbid")}'>${vSimilarArtist.getProperty("artistName")}</a>&nbsp
+        <a href='@{Artist.mbid(vSimilarArtist.getProperty("mbid"))}'>${vSimilarArtist.getProperty("artistName")}</a>&nbsp
         #{/list}
     </h5>
 #{/if}
