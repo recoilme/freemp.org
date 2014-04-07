@@ -2,6 +2,7 @@
 /modules
 /test-result
 /logs
+/fdb
 .DS_Store
 freemp.org.iml
 freemp.org.ipr
