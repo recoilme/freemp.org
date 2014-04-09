@@ -37,6 +37,7 @@ public class Artist extends Controller {
                 renderArgs.put("username", v.getProperty("username"));
             }
         }
+
     }
 
     public static void index() {
@@ -84,6 +85,13 @@ public class Artist extends Controller {
 
     }
 
+    public static void s(String q,String l) {
+        if (l!=null && (l.equals("en") || l.equals("ru"))) {
+            Lang.change(l);
+        }
+        search(q);
+    }
+
     public static void search(String q) {
         String searchtxt = (""+q).toLowerCase().replace(Artist.special,"").replace(" ","_").trim();
         Vertex vArtist = DbWrapper.getVertex("ClsArtist.searchName", searchtxt);
@@ -106,6 +114,7 @@ public class Artist extends Controller {
 
     public static Vertex getArtistBio(Vertex vArtist){
         String lang = Lang.get();
+        System.out.println("lang:"+lang);
         Iterable<Edge> bios = vArtist.getEdges(Direction.OUT, "artistBio");
 
 
