@@ -1,6 +1,11 @@
 #{extends 'main.html' /}
-#{set title:'Home' /}
+#{set title:'FreeMp' /}
 #{list items:posts, as:'post'}
-<h1>${post.content} by ${post.uname}</h1>
+<p class="post">
+    ${post.content.raw()}
+<span>by <b>${post.uname}</b>, <i>${new Date(post.modified).since(true)}</i> | ${post.id}</span>
+
+</p>
+<hr>
 #{/list}
 

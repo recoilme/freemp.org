@@ -52,7 +52,6 @@ public class DbWrapper {
     }
 
     public static Edge addEdge(String edgeName, ORID vOut, ORID vIn) {
-        //OrientGraph graph = dbFactory.getTx();
         Edge edge = null;
         try {
             edge = graph.addEdge(null, graph.getVertex(vOut), graph.getVertex(vIn), edgeName);

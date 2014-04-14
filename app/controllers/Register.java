@@ -92,8 +92,12 @@ public class Register extends Controller {
             response.setCookie("rememberme", Crypto.sign(username + "-" + expiration.getTime()) + "-" + username + "-" + expiration.getTime(),null,"/",
                     Time.parseDuration(duration),false,true);
 
-
-            Application.index();
+            //redirect("");
+            try {
+                Secure.login();
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
 
         }
         else {

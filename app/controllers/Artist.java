@@ -44,8 +44,11 @@ public class Artist extends Controller {
         renderHtml("Ok");
     }
 
+    public static void albums(String mbid) {
+
+    }
+
     public static void mbid(String mbid) {
-        OrientGraph graph = DbWrapper.graph;
         Vertex vArtist = DbWrapper.getVertex("ClsArtist.mbid", mbid);
         if (vArtist == null) {
             error("Artist not found");
@@ -58,7 +61,6 @@ public class Artist extends Controller {
             String vId = vArtist.getId().toString();
             for (Edge edge : similars) {
                 //System.out.println(edge.toString());
-                //System.out.println(vArtist.getId()+" | "+edge.getVertex(Direction.OUT).getId()+ " | "+edge.getVertex(Direction.IN).getId());
                 if (vId.equals(""+edge.getVertex(Direction.OUT).getId())) {
                     similarNames.add(edge.getVertex(Direction.IN));
                 }
@@ -144,6 +146,8 @@ public class Artist extends Controller {
             bio.locale = lang;
             Vertex vBio = DbWrapper.saveClass(bio);
             Edge artistBio = DbWrapper.addEdge("artistBio",(ORID)vArtist.getId(),(ORID)vBio.getId());
+            //"".escapeHtml();
+
             return vBio;
         }
         catch (Exception e) {

@@ -7,4 +7,5 @@ public class Post {
     public String content;
     public long modified;
     public String uname;
+    public String id;
 }

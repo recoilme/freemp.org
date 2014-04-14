@@ -1,6 +1,6 @@
 #{extends 'main.html' /}
 <h1>${vArtist.getProperty("artistName")}</h1>
-<img src="${img}" width="355"/><br/>
+<img src="${img}" width="350"/><br/>
 
 #{if similarNames.size()>0}
     <h5>Artist's with similar names:
@@ -9,6 +9,14 @@
         #{/list}
     </h5>
 #{/if}
+<ul class="nav nav-justified">
+    <li class="active">
+        <a href='@{Artist.mbid(vArtist.getProperty("mbid"))}'>Bio</a>
+    </li>
+    <li>
+        <a href='@{Artist.albums(vArtist.getProperty("mbid"))}'>Albums</a>
+    </li>
+</ul>
 
 #{if vBio!=null}
     ${vBio.getProperty("bio")}
