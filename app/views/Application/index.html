@@ -3,7 +3,7 @@
 #{list items:posts, as:'post'}
 <p class="post">
     ${post.content.raw()}
-<span>by <b>${post.uname}</b>, <i>${new Date(post.modified).since(true)}</i> | ${post.id}</span>
+<br/><span>by <b>${post.uname}</b>, <i>${new Date(post.modified).since(true)}</i> | ${post.id}</span>
 
 </p>
 <hr>

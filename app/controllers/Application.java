@@ -48,11 +48,12 @@ public class Application extends Controller {
                 Set<String> properties = post.getPropertyKeys();
                 Iterable<Edge> e = post.getEdges(Direction.IN, "author");
                 for (Edge edge:e) {
-                    if (e!=null)
-                        System.out.println("e:"+edge.getId());
+                    if (e!=null) {
+                        //System.out.println("e:" + edge.getId());
+                    }
                 }
                 for (String key:properties) {
-                    System.out.println(post.getId()+":" +post.toString()+":"+ key + ":" + post.getProperty(key));
+                    //System.out.println(post.getId()+":" +post.toString()+":"+ key + ":" + post.getProperty(key));
 
                 }
                 Post p = new Post();
