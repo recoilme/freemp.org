@@ -1,0 +1,45 @@
+#{extends 'main.html' /}
+#{set title:'FreeMp' /}
+<script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
+<script type="text/javascript">
+bkLib.onDomLoaded(function() {
+new nicEditor({buttonList : ['bold','italic','underline','ol','ul','indent','outdent','strikeThrough','superscript','xhtml','image','upload','link','unlink']}).panelInstance('content');
+});
+</script>
+<p class="post">
+    ${vPost.getProperty("content").raw()}
+    <br/><span>by <b>${vAuthor.getProperty("username")}</b>, <i>${new Date(vPost.getProperty("created")).since(true)}</i></span>
+</p>
+<hr>
+#{ifnot username}
+    <a href="@{register.index}">Register for writing comments</a>
+#{/ifnot}
+#{else}
+    #{form @addcomment()}
+
+    #{if flash.error}
+    <div class="alert alert-danger alert-error">
+        &{flash.error}
+    </div>
+    #{/if}
+    #{if flash.success}
+    <p class="success">
+        &{flash.success}
+    </p>
+    #{/if}
+
+    <input type="hidden" name="postid" id="postid" value="${postId}">
+    <div class="form-horizontal">
+        <section class="post-body text">
+            <div class="form-group">
+                <textarea id="content" class="form-control" rows="10" placeholder="New Post" name="content" data-val-required="The Body field is required." data-val="true" cols="20"></textarea>
+                <span class="field-validation-valid" data-valmsg-replace="true" data-valmsg-for="content"></span>
+            </div>
+            <div class="form-group">
+                <input class="btn btn-primary" type="submit" value="Publish">
+            </div>
+        </section>
+    </div>
+
+    #{/form}
+#{/else}

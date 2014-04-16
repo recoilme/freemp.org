@@ -5,10 +5,8 @@ import com.orientechnologies.orient.core.id.ORID;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import models.ClsArtist;
 import models.ClsBio;
-import models.DbWrapper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import play.i18n.Lang;
@@ -31,13 +29,7 @@ public class Artist extends Controller {
 
     @Before
     static void setConnectedUser() {
-        if(Security.isConnected()) {
-            Vertex v = DbWrapper.getVertex(Security.connected().contains("@")?"User.email":"User.username", Security.connected());
-            if (v != null) {
-                renderArgs.put("username", v.getProperty("username"));
-            }
-        }
-
+        Application.setConnectedUser();
     }
 
     public static void index() {

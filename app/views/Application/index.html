@@ -1,11 +1,10 @@
 #{extends 'main.html' /}
 #{set title:'FreeMp' /}
-#{list items:posts, as:'post'}
+#{list items:articles, as:'article'}
 <p class="post">
-    ${post.content.raw()}
-<br/><span>by <b>${post.uname}</b>, <i>${new Date(post.modified).since(true)}</i> | ${post.id}</span>
+    ${article.content.raw()}
+<br/><span>by <b>${article.uname}</b>, <i>${new Date(article.created).since(true)}</i> | <a href="@{post.id(article.id)}">comments</a></span>
 
 </p>
 <hr>
 #{/list}
-

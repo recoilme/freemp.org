@@ -1,7 +1,6 @@
 package models;
 
 import com.tinkerpop.blueprints.Vertex;
-
 import java.util.HashMap;
 import java.util.Map;
 

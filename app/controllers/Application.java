@@ -1,45 +1,41 @@
 package controllers;
 
-import com.google.gson.JsonElement;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Parameter;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
-import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
-import com.tinkerpop.blueprints.impls.orient.OrientVertex;
-import models.Post;
-import play.*;
+import models.ClsArticle;
+import models.ClsPost;
 import play.mvc.*;
 
 import java.util.*;
-
-import models.*;
-import sun.security.provider.MD5;
 
 public class Application extends Controller {
 
     @Before
     static void setConnectedUser() {
         if(Security.isConnected()) {
-            Vertex v = DbWrapper.getVertex(Security.connected().contains("@")?"User.email":"User.username", Security.connected());
+            Vertex v = DbWrapper.getVertexById(Security.connected());
             if (v != null) {
                 renderArgs.put("username", v.getProperty("username"));
             }
         }
+        else {
+            //System.out.println("Anon");
+        }
     }
 
     public static void index() {
-        List<Post> posts = new ArrayList<Post>();
+        List<ClsArticle> articles = new ArrayList<ClsArticle>();
 
         OrientGraph graph = DbWrapper.graph;
         Iterable<Vertex> results = null;
 
         try {
             results = graph.command(
-                    new OCommandSQL("select *, in('author')[0].username as uname from Article order by modified desc")//"traverse in_author from (select * from Article)")
+                    new OCommandSQL("select *, in('author')[0].username as uname from ClsPost order by modified desc")//"traverse in_author from (select * from Article)")
                     //"select from Article where any()")
                     //new OCommandSQL("select * , first(in('author').username) as uname from Article order by modified desc limit 10")
             ).execute();
@@ -56,22 +52,19 @@ public class Application extends Controller {
                     //System.out.println(post.getId()+":" +post.toString()+":"+ key + ":" + post.getProperty(key));
 
                 }
-                Post p = new Post();
-                p.content = post.getProperty("content");
-                p.modified = post.getProperty("modified");
-                p.uname = post.getProperty("uname");
-                p.id = ""+(ORID)post.getId();
-                posts.add(p);
+                ClsArticle article = new ClsArticle();
+                article.content = post.getProperty("content");
+                article.created = post.getProperty("created");
+                article.uname = post.getProperty("uname");
+                article.id = ""+(ORID)post.getId();
+                //System.out.println("111!"+DbWrapper.Vertex2String(post));
+                articles.add(article);
             }
         }
         catch (Exception e) {
             System.out.println("Ex getQueryResult:"+e.toString());
         }
-        finally {
-            //graph.shutdown();
-        }
-
-        render(posts);
+        render(articles);
     }
 
 
@@ -96,34 +89,4 @@ public class Application extends Controller {
             }
             //gremlin?
             */
-    /*
-
-    @Before
-    static void addDb() {
-        OrientGraph graph = dbFactory.getTx();
-        try {
-            if (false) {
-                for (Vertex v : graph.getVertices()) {
-                    graph.removeVertex(v);
-                }
-                graph.commit();
-            }
-
-            graph.createKeyIndex("name", Vertex.class, new Parameter("type", "UNIQUE"), new Parameter("class", "Usr"));
-            graph.commit();
-
-            OrientVertex u = graph.addVertex("class:Usr", "name", "admin", "email", "", "pwd", "admin");
-            OrientVertex p = graph.addVertex( "class:Post", "title", "title", "body", "body");
-            p.addEdge("class:Author",u,null,null,"date","2013-07-30");
-            graph.commit();
-        }
-        catch (Exception e) {
-            System.out.println("Error:|"+e.toString()+"|");
-            graph.rollback();
-        }
-        finally {
-            graph.shutdown();
-        }
-    }
-    */
 }

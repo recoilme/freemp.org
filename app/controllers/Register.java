@@ -1,11 +1,9 @@
 package controllers;
 
-import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
-import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
-import models.DbWrapper;
+import models.ClsUser;
 import play.Play;
 import play.libs.Crypto;
 import play.libs.Time;
@@ -15,7 +13,6 @@ import play.mvc.Controller;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by recoilme on 19/03/14.
@@ -23,13 +20,9 @@ import java.util.Set;
 public class Register extends Controller {
     @Before
     static void setConnectedUser() {
-        if(Security.isConnected()) {
-            Vertex v = DbWrapper.getVertex(Security.connected().contains("@")?"User.email":"User.username", Security.connected());
-            if (v != null) {
-                renderArgs.put("username", v.getProperty("username"));
-            }
-        }
+        Application.setConnectedUser();
     }
+
     public static void index() {
         render();
     }
@@ -59,42 +52,42 @@ public class Register extends Controller {
             flash.error("Error: username length must be more then 0");
             index();
         }
-        if (email.length()<=3) {
-            flash.error("Error: email length must be more then 3");
+        if (email.length()<=2) {
+            flash.error("Error: email length must be more then 2");
             index();
         }
         if (password.length()<5) {
             flash.error("Error: password length must be more then 5");
             index();
         }
-        if (DbWrapper.getVertex("User.email", email)!=null) {
+        if (DbWrapper.getVertex("ClsUser.email", email)!=null) {
             flash.error("Error: user with this email:'"+ email + "' allready exists in database");
             index();
         }
-        if (DbWrapper.getVertex("User.username", username)!=null) {
+        if (DbWrapper.getVertex("ClsUser.username", username)!=null) {
             flash.error("Error: user with this username:'"+ username + "' allready exists in database");
             index();
         }
-        Map<String,Object> props = new HashMap<String,Object>();
-        props.put("username",username);
-        props.put("email",email);
-        props.put("password",password);
-        props.put("remember",true);
-        if (DbWrapper.addVertex("User", props)!=null) {
+        ClsUser user = new ClsUser();
+        user.username = username;
+        user.email=email;
+        user.password=password;
+        user.remember=true;
+        Vertex vUser = DbWrapper.saveClass(user);
+        if (vUser!=null) {
 
             session.clear();
             response.removeCookie("rememberme");
-            session.put("username", username);
+            session.put("username", vUser.getId());
 
             Date expiration = new Date();
             String duration = Play.configuration.getProperty("secure.rememberme.duration","30d");
             expiration.setTime(expiration.getTime() + ((long) Time.parseDuration(duration)) * 1000L );
-            response.setCookie("rememberme", Crypto.sign(username + "-" + expiration.getTime()) + "-" + username + "-" + expiration.getTime(),null,"/",
+            response.setCookie("rememberme", Crypto.sign(vUser.getId() + "-" + expiration.getTime()) + "-" + vUser.getId() + "-" + expiration.getTime(),null,"/",
                     Time.parseDuration(duration),false,true);
-
-            //redirect("");
             try {
                 Secure.login();
+                Application.index();
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }

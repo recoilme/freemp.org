@@ -1,5 +1,5 @@
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
-import models.DbWrapper;
+import controllers.DbWrapper;
 import play.jobs.Job;
 import play.jobs.OnApplicationStop;
 
