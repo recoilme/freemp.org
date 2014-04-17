@@ -7,14 +7,18 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
+import models.ClsArticle;
 import models.ClsComment;
 import models.ClsPost;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
+import play.i18n.Lang;
 import play.mvc.Before;
 import play.mvc.Controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,17 +44,25 @@ public class Post extends Controller {
                 error(404,"");
             }
             else {
+                List<ClsArticle> articles = new ArrayList<ClsArticle>();
                 OrientGraph graph = DbWrapper.graph;
                 Iterable<Vertex> results = null;
                 results = graph.command(
-                        new OCommandSQL("select content,created, in('author')[0].username as uname from (traverse out_comment from "+id+") order by created desc")
+                        new OCommandSQL("select content,created, in('author')[0].username as uname from (traverse out_comment from "+id+") where @class = 'ClsComment' order by created asc")
                     ).execute();
 
                 for (Vertex comments:results){
-                    System.out.println(DbWrapper.Vertex2String(comments));
+                    //System.out.println(DbWrapper.Vertex2String(comments));
+                    ClsArticle article = new ClsArticle();
+                    article.content = comments.getProperty("content");
+                    article.created = comments.getProperty("created");
+                    article.uname = comments.getProperty("uname");
+                    article.id = id;
+                    //System.out.println("111!"+DbWrapper.Vertex2String(post));
+                    articles.add(article);
                 }
                 String postId = id;
-                render(vPost,vAuthor,postId);
+                render(vPost,vAuthor,postId,articles);
             }
         }
         catch (Exception e) {
@@ -74,7 +86,8 @@ public class Post extends Controller {
                 Vertex vComment = DbWrapper.saveClass(clsComment);
                 if (vComment != null) {
                     Edge comment = DbWrapper.addEdge("comment", (ORID) DbWrapper.getVertexById(postid).getId(), (ORID) vComment.getId());
-                    Edge author  = DbWrapper.addEdge("author", (ORID) user.getId(), (ORID) vComment.getId());
+                    Edge author = DbWrapper.addEdge("author", (ORID) user.getId(), (ORID) vComment.getId());
+                    //System.out.println("user"+(ORID) user.getId()+"comment"+(ORID) vComment.getId());
                     if (comment != null) {
                         id(postid);
                     }
@@ -94,6 +107,7 @@ public class Post extends Controller {
                 long now = System.currentTimeMillis();
                 clsPost.modified = now;
                 clsPost.created = now;
+                clsPost.lang = Lang.get();
                 Vertex vPost = DbWrapper.saveClass(clsPost);
                 if (vPost != null) {
                     Edge author = DbWrapper.addEdge("author", (ORID) user.getId(), (ORID) vPost.getId());

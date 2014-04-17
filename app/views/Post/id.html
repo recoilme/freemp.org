@@ -11,8 +11,18 @@ new nicEditor({buttonList : ['bold','italic','underline','ol','ul','indent','out
     <br/><span>by <b>${vAuthor.getProperty("username")}</b>, <i>${new Date(vPost.getProperty("created")).since(true)}</i></span>
 </p>
 <hr>
+
+#{list items:articles, as:'article'}
+<p class="post">
+    ${article.content.raw()}
+    <br/><span>by <b>${article.uname}</b>, <i>${new Date(article.created).since(true)}</i></span>
+
+</p>
+<hr>
+#{/list}
+
 #{ifnot username}
-    <a href="@{register.index}">Register for writing comments</a>
+    <a href="@{register.index}">Register</a> or <a href="@{secure.login}">login</a> for writing comments
 #{/ifnot}
 #{else}
     #{form @addcomment()}

@@ -5,7 +5,6 @@ package models;
  */
 public class ClsComment {
     public String content;
-    public String replyto;
     public long modified;
     public long created;
 }

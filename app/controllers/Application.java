@@ -41,23 +41,21 @@ public class Application extends Controller {
             ).execute();
 
             for (Vertex post:results){
-                Set<String> properties = post.getPropertyKeys();
-                Iterable<Edge> e = post.getEdges(Direction.IN, "author");
-                for (Edge edge:e) {
-                    if (e!=null) {
-                        //System.out.println("e:" + edge.getId());
-                    }
-                }
-                for (String key:properties) {
-                    //System.out.println(post.getId()+":" +post.toString()+":"+ key + ":" + post.getProperty(key));
 
+                Iterable<Edge> e = post.getEdges(Direction.OUT, "comment");
+                int size = 0;
+                for(Edge value : e) {
+                    size++;
                 }
+                //System.out.println("size"+size );
+
                 ClsArticle article = new ClsArticle();
                 article.content = post.getProperty("content");
                 article.created = post.getProperty("created");
                 article.uname = post.getProperty("uname");
                 article.id = ""+(ORID)post.getId();
-                //System.out.println("111!"+DbWrapper.Vertex2String(post));
+                article.commentsCount = size;
+                System.out.println("111!"+DbWrapper.Vertex2String(post));
                 articles.add(article);
             }
         }

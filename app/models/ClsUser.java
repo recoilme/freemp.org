@@ -8,4 +8,5 @@ public class ClsUser {
     public String email;
     public String password;
     public boolean remember;
+    public String lang;
 }

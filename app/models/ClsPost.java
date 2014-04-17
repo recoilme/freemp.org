@@ -7,4 +7,5 @@ public class ClsPost {
     public String content;
     public long modified;
     public long created;
+    public String lang;
 }

@@ -3,7 +3,7 @@
 #{list items:articles, as:'article'}
 <p class="post">
     ${article.content.raw()}
-<br/><span>by <b>${article.uname}</b>, <i>${new Date(article.created).since(true)}</i> | <a href="@{post.id(article.id)}">comments</a></span>
+<br/><span>by <b>${article.uname}</b>, <i>${new Date(article.created).since(true)}</i> | <a href="@{post.id(article.id)}">${article.commentsCount} ${article.commentsCount.pluralize('comment', 'comments')}</a></span>
 
 </p>
 <hr>

@@ -5,6 +5,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import models.ClsUser;
 import play.Play;
+import play.i18n.Lang;
 import play.libs.Crypto;
 import play.libs.Time;
 import play.mvc.Before;
@@ -29,17 +30,17 @@ public class Register extends Controller {
 
     public static void createNewDb() {
         //System.out.println(renderArgs.get("username"));
-        if (renderArgs.get("username")!=null && renderArgs.get("username").equals("admin")) {
-            OrientGraph graph = DbWrapper.graph;
-            for (Edge e : graph.getEdges()) {
-                System.out.println(e.toString());
-                e.remove();
-            }
-            for (Vertex v : graph.getVertices()) {
-                System.out.println(v.toString());
-                graph.removeVertex(v);
-            }
+
+        OrientGraph graph = DbWrapper.graph;
+        for (Edge e : graph.getEdges()) {
+            System.out.println(e.toString());
+            e.remove();
         }
+        for (Vertex v : graph.getVertices()) {
+            System.out.println(v.toString());
+            graph.removeVertex(v);
+        }
+
 
     }
 
@@ -53,11 +54,11 @@ public class Register extends Controller {
             index();
         }
         if (email.length()<=2) {
-            flash.error("Error: email length must be more then 2");
+            flash.error("Error: email length must be more");
             index();
         }
         if (password.length()<5) {
-            flash.error("Error: password length must be more then 5");
+            flash.error("Error: password length must be more then 4");
             index();
         }
         if (DbWrapper.getVertex("ClsUser.email", email)!=null) {
@@ -73,6 +74,7 @@ public class Register extends Controller {
         user.email=email;
         user.password=password;
         user.remember=true;
+        user.lang = Lang.get();
         Vertex vUser = DbWrapper.saveClass(user);
         if (vUser!=null) {
 
