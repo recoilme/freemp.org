@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- include libries(jQuery, bootstrap, fontawesome) -->
+    <script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+
+    <!-- include summernote css/js-->
+    #{stylesheet src:"summernote.css" /}
+    #{script src:"summernote.min.js" /}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#summernote').summernote({
+                height: "500px"
+            });
+        });
+
+    </script>
+</head>
+<body>
+<div class="col-md-9" role="main">
+<div class="height">blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~<br/>blah blah~</div>
+<script>
+          $(document).ready(function() {
+            $('.height').summernote({height: 150});
+          });
+        </script>
+</div>
+</body>
+</html>
+

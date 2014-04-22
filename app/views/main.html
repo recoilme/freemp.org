@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -6,10 +6,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=${_response_encoding}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}" />
-
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     #{stylesheet src:"bootstrap.min.css" /}
     #{stylesheet src:"freemp.css" /}
-    #{stylesheet src:"signin.css" /}
+    #{stylesheet src:"summernote.css" /}
 </head>
 <body>
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -70,9 +70,15 @@
 </div>
 
 <div class="jumbotron">
+    #{ifnot username}
     <div class="container">
-        <h1>${blogBaseline} <a class="btn btn-primary btn-lg" role="button" href="https://github.com/recoilme/freemp">Get player »</a></h1>
+        <h1>Whats up?!</h1>
+        <p>This is a multilanguage group blog about music and performers. This website was designed primarily to support users of FreeMP (android music player), but somehow strangely mutated into an independent project.</p>
+        <p>
+            <a class="btn btn-primary btn-lg" role="button" href="https://github.com/recoilme/freemp">Get player »</a>
+        </p>
     </div>
+    #{/ifnot}
 </div>
 
 <div class="container">
@@ -87,6 +93,18 @@
 <!-- Latest compiled and minified JavaScript -->
 #{script src:"jquery-2.1.0.min.js" /}
 #{script src:"bootstrap.js" /}
+#{script src:"summernote.min.js" /}
+<script>
+    $(document).ready(function() {
+        $('#content').summernote({
+            height: 250,   //set editable area's height
+            focus: true    //set focus editable area after Initialize summernote
+        });
+    });
+</script>
+
+
+
 
 </body>
 </html>

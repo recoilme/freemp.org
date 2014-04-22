@@ -17,9 +17,7 @@ import play.mvc.Before;
 import play.mvc.Controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by recoilme on 24/03/14.
@@ -76,8 +74,8 @@ public class Post extends Controller {
         if(Security.isConnected()) {
             Vertex user = DbWrapper.getVertexById(Security.connected());
             if (user != null) {
-                PolicyFactory policy = Sanitizers.FORMATTING.and(Sanitizers.LINKS).and(Sanitizers.IMAGES).and(Sanitizers.BLOCKS);
-                content = policy.sanitize(content);
+
+                content = Policy.POLICY_DEFINITION.sanitize(content);
                 ClsComment clsComment = new ClsComment();
                 clsComment.content = content;
                 long now = System.currentTimeMillis();
@@ -100,8 +98,9 @@ public class Post extends Controller {
         if(Security.isConnected()) {
             Vertex user = DbWrapper.getVertexById(Security.connected());
             if (user != null) {
-                PolicyFactory policy = Sanitizers.FORMATTING.and(Sanitizers.LINKS).and(Sanitizers.IMAGES).and(Sanitizers.BLOCKS);
-                content = policy.sanitize(content);
+                //PolicyFactory policy = Sanitizers.FORMATTING.and(Sanitizers.LINKS).and(Sanitizers.IMAGES).and(Sanitizers.BLOCKS);
+                //content = policy.sanitize(content);
+                content = Policy.POLICY_DEFINITION.sanitize(content);
                 ClsPost clsPost = new ClsPost();
                 clsPost.content = content;
                 long now = System.currentTimeMillis();

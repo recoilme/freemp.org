@@ -55,7 +55,7 @@ public class Application extends Controller {
                 article.uname = post.getProperty("uname");
                 article.id = ""+(ORID)post.getId();
                 article.commentsCount = size;
-                System.out.println("111!"+DbWrapper.Vertex2String(post));
+                //System.out.println("111!"+DbWrapper.Vertex2String(post));
                 articles.add(article);
             }
         }

@@ -1,11 +1,6 @@
 #{extends 'main.html' /}
 #{set title:'FreeMp' /}
-<script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
-<script type="text/javascript">
-bkLib.onDomLoaded(function() {
-new nicEditor({buttonList : ['bold','italic','underline','ol','ul','indent','outdent','strikeThrough','superscript','xhtml','image','upload','link','unlink']}).panelInstance('content');
-});
-</script>
+
 <p class="post">
     ${vPost.getProperty("content").raw()}
     <br/><span>by <b>${vAuthor.getProperty("username")}</b>, <i>${new Date(vPost.getProperty("created")).since(true)}</i></span>
@@ -15,7 +10,7 @@ new nicEditor({buttonList : ['bold','italic','underline','ol','ul','indent','out
 #{list items:articles, as:'article'}
 <p class="post">
     ${article.content.raw()}
-    <br/><span>by <b>${article.uname}</b>, <i>${new Date(article.created).since(true)}</i></span>
+    <span>by <b>${article.uname}</b>, <i>${new Date(article.created).since(true)}</i></span>
 
 </p>
 <hr>

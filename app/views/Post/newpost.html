@@ -1,12 +1,6 @@
 #{extends 'main.html' /}
-<script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
-<script type="text/javascript">
-bkLib.onDomLoaded(function() {
-new nicEditor({buttonList : ['bold','italic','underline','ol','ul','indent','outdent','strikeThrough','superscript','xhtml','image','upload','link','unlink']}).panelInstance('content');
-});
-</script>
-#{form @save()}
 
+#{form @save()}
 #{if flash.error}
 <div class="alert alert-danger alert-error">
     &{flash.error}
@@ -17,7 +11,6 @@ new nicEditor({buttonList : ['bold','italic','underline','ol','ul','indent','out
     &{flash.success}
 </p>
 #{/if}
-
 
 <div class="form-horizontal">
     <section class="post-body text">
@@ -30,7 +23,5 @@ new nicEditor({buttonList : ['bold','italic','underline','ol','ul','indent','out
         </div>
     </section>
 </div>
-
 #{/form}
-
 
