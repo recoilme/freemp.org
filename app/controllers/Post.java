@@ -1,6 +1,7 @@
 package controllers;
 
 
+import com.google.common.io.Files;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.tinkerpop.blueprints.Direction;
@@ -9,12 +10,15 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import models.ClsArticle;
 import models.ClsPost;
+import org.apache.commons.io.IOUtils;
 import play.Logger;
+import play.Play;
 import play.i18n.Lang;
+import play.libs.Images;
 import play.mvc.Before;
 import play.mvc.Controller;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,11 +126,48 @@ public class Post extends Controller {
         return DbWrapper.saveClass(clsPost);
     }
 
-    public static void saveimage() {
+    public static void saveimage(File attachment) {
+        String result = "";
+        try {
+            File[] images = params.get("file", File[].class);
+            for (File f : images) {
+                Images.resize(f,f,800,-1);
+                FileInputStream is = new FileInputStream(f);
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                String original = "public/uploads/" + f.getName();
+                IOUtils.copy(is, new FileOutputStream(Play.getFile(original)));
+            }
+        }
+        catch (Exception e) {
+            Logger.info("E:"+e.toString());
+        }
+        /*
         File[] images = params.get("file", File[].class);
+        Logger.info("Absolute on where to send %s", Play.getFile("").getAbsolutePath() + File.separator + "uploads" + File.separator);
+
         for (File f : images) {
             Logger.info(f.getName());
+            Logger.info(f.getAbsolutePath().toString());
+            try {
+                FileInputStream f = new FileInputStream(f.);
+                InputStream data = request.body;
+                Logger.info("dat:"+data.available());
+                FileOutputStream moveTo = new FileOutputStream(new File(Play.getFile("").getAbsolutePath())
+                        + File.separator + "uploads" + File.separator + f.getName());
+
+                IOUtils.copy(data, moveTo);
+                //Files.move(f,new File(Play.getFile("").getAbsolutePath() + File.separator + "uploads" + File.separator+f.getName()));
+
+            } catch (Exception ex) {
+
+                // catch file exception
+                // catch IO Exception later on
+                renderText("{success: false}" + ex.toString());
+                Logger.info(ex.toString());
+                System.out.println("Exception is:" + ex);
+            }
         }
         renderText("http://i.imgur.com/uDUhoQh.png");
+        */
     }
 }
