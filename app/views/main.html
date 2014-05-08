@@ -98,8 +98,26 @@
     $(document).ready(function() {
         $('#content').summernote({
             height: 250,   //set editable area's height
-            focus: true    //set focus editable area after Initialize summernote
+            focus: true,    //set focus editable area after Initialize summernote
+            onImageUpload: function(files, editor, welEditable) {
+                sendFile(files[0], editor, welEditable);
+            }
         });
+        function sendFile(file, editor, welEditable) {
+            data = new FormData();
+            data.append("file", file);
+            $.ajax({
+                data: data,
+                type: "POST",
+                url: "saveimage",
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(url) {
+                    editor.insertImage(welEditable, url);
+                }
+            });
+        }
     });
 </script>
 

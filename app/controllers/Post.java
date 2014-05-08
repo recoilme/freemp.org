@@ -8,14 +8,13 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import models.ClsArticle;
-import models.ClsComment;
 import models.ClsPost;
-import org.owasp.html.PolicyFactory;
-import org.owasp.html.Sanitizers;
+import play.Logger;
 import play.i18n.Lang;
 import play.mvc.Before;
 import play.mvc.Controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +25,7 @@ public class Post extends Controller {
     @Before
     static void setConnectedUser() {
         Application.setConnectedUser();
+
     }
 
     public static void newpost() {
@@ -46,7 +46,8 @@ public class Post extends Controller {
                 OrientGraph graph = DbWrapper.graph;
                 Iterable<Vertex> results = null;
                 results = graph.command(
-                        new OCommandSQL("select content,created, in('author')[0].username as uname from (traverse out_comment from "+id+") where @class = 'ClsComment' order by created asc")
+                        new OCommandSQL("select content,created, in('author')[0].username as uname from (traverse out_comment from "+id+") where in_comment is not null order by created asc")
+                        //new OCommandSQL("select content,created, in('author')[0].username as uname from (traverse out_comment from "+id+") where @class = 'ClsPost' order by created asc")
                     ).execute();
 
                 for (Vertex comments:results){
@@ -74,18 +75,15 @@ public class Post extends Controller {
         if(Security.isConnected()) {
             Vertex user = DbWrapper.getVertexById(Security.connected());
             if (user != null) {
+                Vertex vComment = newArticle(content);
+                Vertex vPost = DbWrapper.getVertexById(postid);
 
-                content = Policy.POLICY_DEFINITION.sanitize(content);
-                ClsComment clsComment = new ClsComment();
-                clsComment.content = content;
-                long now = System.currentTimeMillis();
-                clsComment.modified = now;
-                clsComment.created = now;
-                Vertex vComment = DbWrapper.saveClass(clsComment);
-                if (vComment != null) {
-                    Edge comment = DbWrapper.addEdge("comment", (ORID) DbWrapper.getVertexById(postid).getId(), (ORID) vComment.getId());
+                if (vComment != null && vPost != null) {
+                    //udpate modified time
+                    vPost.setProperty("modified",System.currentTimeMillis());
+                    Edge comment = DbWrapper.addEdge("comment", (ORID) vPost.getId(), (ORID) vComment.getId());
                     Edge author = DbWrapper.addEdge("author", (ORID) user.getId(), (ORID) vComment.getId());
-                    //System.out.println("user"+(ORID) user.getId()+"comment"+(ORID) vComment.getId());
+
                     if (comment != null) {
                         id(postid);
                     }
@@ -98,16 +96,7 @@ public class Post extends Controller {
         if(Security.isConnected()) {
             Vertex user = DbWrapper.getVertexById(Security.connected());
             if (user != null) {
-                //PolicyFactory policy = Sanitizers.FORMATTING.and(Sanitizers.LINKS).and(Sanitizers.IMAGES).and(Sanitizers.BLOCKS);
-                //content = policy.sanitize(content);
-                content = Policy.POLICY_DEFINITION.sanitize(content);
-                ClsPost clsPost = new ClsPost();
-                clsPost.content = content;
-                long now = System.currentTimeMillis();
-                clsPost.modified = now;
-                clsPost.created = now;
-                clsPost.lang = Lang.get();
-                Vertex vPost = DbWrapper.saveClass(clsPost);
+                Vertex vPost = newArticle(content);
                 if (vPost != null) {
                     Edge author = DbWrapper.addEdge("author", (ORID) user.getId(), (ORID) vPost.getId());
                     if (author != null) {
@@ -116,5 +105,28 @@ public class Post extends Controller {
                 }
             }
         }
+    }
+
+    public static Vertex newArticle(String content) {
+        content = ("" + content).trim();
+        if (content.isEmpty() || content.equals("<p><br></p>")) return null;
+        System.out.println("'"+content+"'");
+        content = Policy.POLICY_DEFINITION.sanitize(content);
+        System.out.println("'"+content+"'");
+        ClsPost clsPost = new ClsPost();
+        clsPost.content = content;
+        long now = System.currentTimeMillis();
+        clsPost.modified = now;
+        clsPost.created = now;
+        clsPost.lang = Lang.get();
+        return DbWrapper.saveClass(clsPost);
+    }
+
+    public static void saveimage() {
+        File[] images = params.get("file", File[].class);
+        for (File f : images) {
+            Logger.info(f.getName());
+        }
+        renderText("http://i.imgur.com/uDUhoQh.png");
     }
 }

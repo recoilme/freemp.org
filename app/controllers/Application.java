@@ -35,7 +35,7 @@ public class Application extends Controller {
 
         try {
             results = graph.command(
-                    new OCommandSQL("select *, in('author')[0].username as uname from ClsPost order by modified desc")//"traverse in_author from (select * from Article)")
+                    new OCommandSQL("select *, in('author')[0].username as uname from ClsPost where in_comment is null order by modified desc")//"traverse in_author from (select * from Article)")
                     //"select from Article where any()")
                     //new OCommandSQL("select * , first(in('author').username) as uname from Article order by modified desc limit 10")
             ).execute();

@@ -73,6 +73,10 @@ public class Policy {
 
     private static final Pattern NUMBER_OR_PERCENT = Pattern.compile(
             "[0-9]+%?");
+    private static final Pattern BASE64_STRING = Pattern.compile(
+            //"^([a-zA-Z0-9/+=]+)$",Pattern.MULTILINE);
+            "(.*)"
+    );
     private static final Pattern PARAGRAPH = Pattern.compile(
             "(?:[\\p{L}\\p{N},'\\.\\s\\-_\\(\\)]|&[0-9]{2};)*");
     private static final Pattern HTML_ID = Pattern.compile(
