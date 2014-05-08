@@ -10,6 +10,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import models.ClsArticle;
 import models.ClsPost;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import play.Logger;
 import play.Play;
@@ -19,7 +20,9 @@ import play.mvc.Before;
 import play.mvc.Controller;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -126,20 +129,30 @@ public class Post extends Controller {
         return DbWrapper.saveClass(clsPost);
     }
 
-    public static void saveimage(File attachment) {
+    public static void saveimage() {
         String result = "";
         try {
             File[] images = params.get("file", File[].class);
+            SimpleDateFormat yyMM = new SimpleDateFormat("yyyyMM");
+            String catalog = yyMM.format(new Date()).substring(3);
+            SimpleDateFormat nameFmt = new SimpleDateFormat("ddHHmmssS");
             for (File f : images) {
                 Images.resize(f,f,800,-1);
+
                 FileInputStream is = new FileInputStream(f);
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
-                String original = "public/uploads/" + f.getName();
+                String original = "img" + File.separator + catalog+ File.separator + Long.toHexString(Long.parseLong(nameFmt.format(new Date())))+ "."+FilenameUtils.getExtension(f.getAbsolutePath().toString()).toLowerCase();
+                if (new File(original).getParentFile().mkdirs()) {
+                   //TODO create noindex
+                }
                 IOUtils.copy(is, new FileOutputStream(Play.getFile(original)));
+                //renderText(original);
+                Logger.info(File.separator+original.replace("img","i"));
+                renderText("http://freemp.org"+File.separator+original.replace("img","i"));
             }
         }
         catch (Exception e) {
-            Logger.info("E:"+e.toString());
+            renderText("Error:"+e.toString());
         }
         /*
         File[] images = params.get("file", File[].class);
