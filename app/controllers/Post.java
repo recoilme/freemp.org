@@ -117,9 +117,7 @@ public class Post extends Controller {
     public static Vertex newArticle(String content, boolean _isComment) {
         content = ("" + content).trim();
         if (content.isEmpty() || content.equals("<p><br></p>")) return null;
-        System.out.println("'"+content+"'");
         content = Policy.POLICY_DEFINITION.sanitize(content);
-        System.out.println("'"+content+"'");
         ClsPost clsPost = new ClsPost();
         clsPost.content = content;
         long now = System.currentTimeMillis();
@@ -156,33 +154,5 @@ public class Post extends Controller {
         catch (Exception e) {
             renderText("Error:"+e.toString());
         }
-        /*
-        File[] images = params.get("file", File[].class);
-        Logger.info("Absolute on where to send %s", Play.getFile("").getAbsolutePath() + File.separator + "uploads" + File.separator);
-
-        for (File f : images) {
-            Logger.info(f.getName());
-            Logger.info(f.getAbsolutePath().toString());
-            try {
-                FileInputStream f = new FileInputStream(f.);
-                InputStream data = request.body;
-                Logger.info("dat:"+data.available());
-                FileOutputStream moveTo = new FileOutputStream(new File(Play.getFile("").getAbsolutePath())
-                        + File.separator + "uploads" + File.separator + f.getName());
-
-                IOUtils.copy(data, moveTo);
-                //Files.move(f,new File(Play.getFile("").getAbsolutePath() + File.separator + "uploads" + File.separator+f.getName()));
-
-            } catch (Exception ex) {
-
-                // catch file exception
-                // catch IO Exception later on
-                renderText("{success: false}" + ex.toString());
-                Logger.info(ex.toString());
-                System.out.println("Exception is:" + ex);
-            }
-        }
-        renderText("http://i.imgur.com/uDUhoQh.png");
-        */
     }
 }
