@@ -134,21 +134,22 @@ public class Post extends Controller {
         try {
             File[] images = params.get("file", File[].class);
             SimpleDateFormat yyMM = new SimpleDateFormat("yyyyMM");
-            String catalog = yyMM.format(new Date()).substring(3);
+            String catalog = yyMM.format(new Date()).substring(2);
+            String dir = "img" + File.separator + catalog;
+            new File(dir).mkdirs();
             SimpleDateFormat nameFmt = new SimpleDateFormat("ddHHmmssS");
             for (File f : images) {
-                Images.resize(f,f,800,-1);
-
-                FileInputStream is = new FileInputStream(f);
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                String original = "img" + File.separator + catalog+ File.separator + Long.toHexString(Long.parseLong(nameFmt.format(new Date())))+ "."+FilenameUtils.getExtension(f.getAbsolutePath().toString()).toLowerCase();
-                if (new File(original).getParentFile().mkdirs()) {
-                   //TODO create noindex
+                String fileExt = FilenameUtils.getExtension(f.getAbsolutePath().toString()).toLowerCase();
+                String original = dir+ File.separator + Long.toHexString(Long.parseLong(nameFmt.format(new Date())))+ "."+fileExt;
+                File newFile = new File(original);
+                if (fileExt.equals("gif") || fileExt.equals("svg")) {
+                    IOUtils.copy(new FileInputStream(f), new FileOutputStream(newFile));
                 }
-                IOUtils.copy(is, new FileOutputStream(Play.getFile(original)));
-                //renderText(original);
-                Logger.info(File.separator+original.replace("img","i"));
-                renderText("http://freemp.org"+File.separator+original.replace("img","i"));
+                else {
+                    Images.resize(f, newFile, 800, -1);
+                }
+                String domen = Play.configuration.getProperty("application.mode").equals("dev")?"http://localhost:9000":"http://freemp.org";
+                renderText(domen+"/"+original.replace("img","i"));
             }
         }
         catch (Exception e) {
