@@ -8,4 +8,5 @@ public class ClsPost {
     public long modified;
     public long created;
     public String lang;
+    public boolean isComment;
 }

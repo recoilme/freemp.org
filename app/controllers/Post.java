@@ -82,7 +82,7 @@ public class Post extends Controller {
         if(Security.isConnected()) {
             Vertex user = DbWrapper.getVertexById(Security.connected());
             if (user != null) {
-                Vertex vComment = newArticle(content);
+                Vertex vComment = newArticle(content,true);
                 Vertex vPost = DbWrapper.getVertexById(postid);
 
                 if (vComment != null && vPost != null) {
@@ -103,7 +103,7 @@ public class Post extends Controller {
         if(Security.isConnected()) {
             Vertex user = DbWrapper.getVertexById(Security.connected());
             if (user != null) {
-                Vertex vPost = newArticle(content);
+                Vertex vPost = newArticle(content,false);
                 if (vPost != null) {
                     Edge author = DbWrapper.addEdge("author", (ORID) user.getId(), (ORID) vPost.getId());
                     if (author != null) {
@@ -114,7 +114,7 @@ public class Post extends Controller {
         }
     }
 
-    public static Vertex newArticle(String content) {
+    public static Vertex newArticle(String content, boolean _isComment) {
         content = ("" + content).trim();
         if (content.isEmpty() || content.equals("<p><br></p>")) return null;
         System.out.println("'"+content+"'");
@@ -126,6 +126,7 @@ public class Post extends Controller {
         clsPost.modified = now;
         clsPost.created = now;
         clsPost.lang = Lang.get();
+        clsPost.isComment = _isComment;
         return DbWrapper.saveClass(clsPost);
     }
 
